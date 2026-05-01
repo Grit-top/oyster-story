@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>利剑牡蛎</title>
+    <title>利剑牡蛎｜完整故事</title>
     <style>
         * {
             margin: 0;
@@ -12,153 +12,184 @@
 
         html, body {
             overflow-x: hidden;
-            overflow-y: auto;
-            height: 100%;
+            font-family: 'Georgia', serif;
+            background-color: #0a0c10;
+            scroll-behavior: smooth;
         }
 
-        body {
-            background-image: url('images/shouye.png');
+        /* 每一屏都是一整页 */
+        .chapter {
+            min-height: 100vh;
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
             background-attachment: fixed;
-            min-height: 100vh;
             position: relative;
-            font-family: 'Georgia', serif;
-        }
-
-        .home-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             color: white;
-            text-shadow: 3px 3px 12px black;
-            width: 90%;
-            max-width: 900px;
+            text-shadow: 2px 2px 8px black;
         }
 
-        .home-center h1 {
-            font-size: 5rem;
-            letter-spacing: 8px;
-            margin-bottom: 20px;
-            font-weight: normal;
+        .center-box {
+            max-width: 90%;
+            width: 700px;
+            background: rgba(0,0,0,0.4);
+            padding: 2rem;
+            border-radius: 32px;
+            backdrop-filter: blur(4px);
         }
 
-        .home-center p {
-            font-size: 1.8rem;
-            font-style: italic;
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 6px;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.6rem;
             line-height: 1.4;
-            letter-spacing: 1px;
         }
 
-        /* 下方导航按钮 */
-        .nav {
+        .quote-left, .quote-right {
+            position: absolute;
+            max-width: 40%;
+            background: rgba(0,0,0,0.5);
+            padding: 1.2rem;
+            border-radius: 24px;
+            font-size: 1.6rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .quote-left {
+            top: 15%;
+            left: 5%;
+            text-align: left;
+        }
+
+        .quote-right {
+            bottom: 15%;
+            right: 5%;
+            text-align: right;
+        }
+
+        .chapter-sign {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
+            left: 0;
             width: 100%;
             text-align: center;
-            z-index: 10;
-        }
-
-        .nav a {
-            color: white;
-            font-size: 2rem;
-            text-decoration: none;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
             background: rgba(0,0,0,0.4);
-            padding: 10px 20px;
-            border-radius: 40px;
-            opacity: 0.8;
-            transition: 0.2s;
-            display: inline-block;
+            padding: 6px;
+            z-index: 20;
         }
 
-        .nav a:hover {
-            opacity: 1;
-            background: rgba(0,0,0,0.6);
+        #music-icon {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            font-size: 28px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            padding: 6px 12px;
+            border-radius: 50px;
+            color: white;
         }
 
-        @media (max-width: 768px) {
-            .home-center h1 {
-                font-size: 2.8rem;
-                letter-spacing: 4px;
-            }
-            .home-center p {
-                font-size: 1.2rem;
-            }
-            .nav a {
-                font-size: 1.2rem;
-                padding: 6px 16px;
-            }
+        @media (max-width: 700px) {
+            h1 { font-size: 2rem; }
+            p, .quote-left, .quote-right { font-size: 1rem; }
+            .quote-left, .quote-right { max-width: 80%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 主内容 -->
-    <div class="home-center">
-        <h1>利剑牡蛎</h1>
-        <p>“世界是我的牡蛎，我将以利剑开启”</p >
-    </div>
+<div id="music-icon">🎵</div>
+<audio id="bgm-audio" loop preload="auto">
+    <source src="Taylor.mp3" type="audio/mpeg">
+</audio>
 
-    <!-- 下一页链接：指向 page2.html -->
-    <div class="nav">
-        <a href="page2.html">▼ 开启 ▼</a >
-    </div>
+<!-- 按顺序放入 9 个章节（一屏一章） -->
+<section class="chapter" style="background-image: url('images/shouye.png');">
+    <div class="center-box"><h1>利剑牡蛎</h1><p>“世界是我的牡蛎，我将以利剑开启”</p ></div>
+</section>
 
-    <!-- ========== 音乐组件 ========== -->
-    <div id="music-control" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer;">
-        <span id="music-icon" style="font-size: 32px; color: white; opacity: 0.7;">🎵</span>
-    </div>
-    
-    <audio id="bgm-audio" loop preload="metadata" style="display: none;">
-        <source src="Taylor.mp3" type="audio/mpeg">
-    </audio>
-    
-    <script>
-        (function() {
-            const audio = document.getElementById('bgm-audio');
-            const icon = document.getElementById('music-icon');
-    
-            const savedTime = localStorage.getItem('musicTime');
-            if (savedTime && !isNaN(parseFloat(savedTime))) {
-                audio.currentTime = parseFloat(savedTime);
-            }
-    
-            const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
-            icon.style.opacity = wasPlaying ? '1' : '0.5';
-    
+<section class="chapter" style="background-image: url('images/huoyan.png');">
+    <div class="center-box"><h1>火焰章</h1><p>烈焰熔炉</p ></div>
+</section>
+
+<section class="chapter" style="background-image: url('images/huoyan.png');">
+    <div class="quote-left">“你必须准备好沐浴在你自身的烈焰之中”</div>
+    <div class="quote-right">“你怎么可能重生呢，如果你不先化为灰烬？”<br>—— 尼采</div>
+</section>
+
+<section class="chapter" style="background-image: url('images/liming.png');">
+    <div class="center-box"><h1>黎明章</h1><p>晨光破晓</p ></div>
+</section>
+
+<section class="chapter" style="background-image: url('images/liming.png');">
+    <div class="quote-left">“黑夜无论怎样悠长，”</div>
+    <div class="quote-right">“白昼总会到来。”<br>—— 莎士比亚</div>
+</section>
+
+<section class="chapter" style="background-image: url('images/haiyang.png');">
+    <div class="center-box"><h1>海洋章</h1><p>碧海苍穹</p ></div>
+</section>
+
+<section class="chapter" style="background-image: url('images/haiyang.png');">
+    <div class="quote-left">“知道你自己是谁，”</div>
+    <div class="quote-right">“世界就会知道你是谁。”</div>
+</section>
+
+<section class="chapter" style="background-image: url('images/muli.png');">
+    <div class="center-box"><p>⚔️ 牡蛎尚未开启，等待你的勇气 ⚔️</p ></div>
+</section>
+
+<section class="chapter" style="background-image: url('images/jieju.png');">
+    <div class="center-box"><p>“你失去的一切，终将指引你走向成功”<br>—— Taylor Swift</p ></div>
+</section>
+
+<div class="chapter-sign">珍珠之心 · 如愿</div>
+
+<script>
+    const audio = document.getElementById('bgm-audio');
+    const icon = document.getElementById('music-icon');
+
+    const savedTime = localStorage.getItem('musicTime');
+    if (savedTime) audio.currentTime = parseFloat(savedTime);
+
+    const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+    if (wasPlaying) audio.play().catch(() => {});
+
+    // ✅ 50ms 保存一次播放进度（极顺滑）
+    setInterval(() => {
+        if (audio.duration && !isNaN(audio.currentTime) && audio.duration !== Infinity) {
+            localStorage.setItem('musicTime', audio.currentTime);
+            localStorage.setItem('musicPlaying', !audio.paused);
+        }
+    }, 50);
+
+    icon.addEventListener('click', () => {
+        if (audio.paused) {
             audio.play().catch(() => {});
-    
-            const saveState = () => {
-                if (audio.duration && !isNaN(audio.currentTime)) {
-                    localStorage.setItem('musicTime', audio.currentTime);
-                    localStorage.setItem('musicPlaying', !audio.paused);
-                }
-            };
-    
-            setInterval(saveState, 50);
-    
-            icon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (audio.paused) {
-                    audio.play().catch(() => {});
-                    icon.style.opacity = '1';
-                } else {
-                    audio.pause();
-                    icon.style.opacity = '0.5';
-                }
-                saveState();
-            });
-    
-            document.body.addEventListener('click', () => {
-                if (audio.paused) {
-                    audio.play().then(() => icon.style.opacity = '1').catch(() => {});
-                    saveState();
-                }
-            }, { once: true });
-        })();
-    </script>
+            icon.style.opacity = '1';
+        } else {
+            audio.pause();
+            icon.style.opacity = '0.5';
+        }
+    });
+
+    // 用户首次点击启动音乐
+    document.body.addEventListener('click', function firstClick() {
+        if (audio.paused) audio.play().catch(() => {});
+    }, { once: true });
+</script>
+
 </body>
 </html>
