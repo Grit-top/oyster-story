@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>火焰章：烈焰熔炉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 防止滚动条出现 */
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        body {
+            background-image: url('images/huoyan.png');
+            background-size: cover;           /* ✅ 完全填满屏幕，不留底色 */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;     /* ✅ 滚动时背景不动，更沉浸 */
+            min-height: 100vh;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        /* 左上方话语 - 无框纯文字 */
+        .quote-left {
+            position: absolute;
+            top: 15%;
+            left: 8%;
+            max-width: 45%;
+            color: white;
+            font-size: 2.6rem;
+            line-height: 1.2;
+            font-style: italic;
+            text-shadow: 2px 2px 5px black;   /* 黑底暗影代替灰色框，保证在任何背景上都清晰 */
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* 右下方话语 */
+        .quote-right {
+            position: absolute;
+            bottom: 20%;
+            right: 8%;
+            max-width: 45%;
+            color: white;
+            text-align: right;
+            font-size: 2.6rem;
+            line-height: 1.2;
+            font-style: italic;
+            text-shadow: 2px 2px 5px black;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* 底部箭头导航 */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .nav a {
+            color: white;
+            font-size: 2rem;
+            text-decoration: none;
+            margin: 0 30px;
+            opacity: 0.7;
+            text-shadow: 1px 1px 2px black;
+        }
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        /* 顶部居中章名 */
+        .chapter-sign {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255,255,255,0.85);
+            font-size: 2rem;
+            letter-spacing: 2px;
+            font-style: normal;
+            z-index: 10;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        /* 让引用多行自动换行，不溢出 */
+        br {
+            display: block;
+        }
+
+        /* 手机适配：稍微缩小字号 */
+        @media (max-width: 768px) {
+            .quote-left, .quote-right {
+                font-size: 1.8rem;
+                max-width: 80%;
+            }
+            .quote-left {
+                top: 10%;
+                left: 5%;
+            }
+            .quote-right {
+                bottom: 10%;
+                right: 5%;
+            }
+            .chapter-sign {
+                font-size: 1.2rem;
+                top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quote-left">
+        你必须准备好沐浴在你自身的烈焰之中。
+    </div>
+
+    <div class="quote-right">
+        你怎么可能重生呢，<br>如果你不先化为灰烬？<br>
+        —— 尼采
+    </div>
+
+    <div class="nav">
+        <a href="page2.html">◀</a >
+        <a href="page4.html">▶</a >
+    </div>
+
+    <div class="chapter-sign">
+        火焰章 · 烈焰熔炉
+    </div>
+<!-- ========== 音乐组件：跨页续播 + 点击启动 ========== -->
+<div id="music-control" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer;">
+    <span id="music-icon" style="font-size: 32px; color: white; opacity: 0.7;">🎵</span>
+</div>
+
+<audio id="bgm-audio" loop preload="metadata" style="display: none;">
+    <source src="Taylor.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    (function() {
+        const audio = document.getElementById('bgm-audio');
+        const icon = document.getElementById('music-icon');
+
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime && !isNaN(parseFloat(savedTime))) {
+            audio.currentTime = parseFloat(savedTime);
+        }
+
+        const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+        icon.style.opacity = wasPlaying ? '1' : '0.5';
+
+        audio.play().catch(() => {});
+
+        const saveState = () => {
+            if (audio.duration && !isNaN(audio.currentTime)) {
+                localStorage.setItem('musicTime', audio.currentTime);
+                localStorage.setItem('musicPlaying', !audio.paused);
+            }
+        };
+
+        setInterval(saveState, 50);
+
+        icon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+                audio.play().catch(() => {});
+                icon.style.opacity = '1';
+            } else {
+                audio.pause();
+                icon.style.opacity = '0.5';
+            }
+            saveState();
+        });
+
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => icon.style.opacity = '1').catch(() => {});
+                saveState();
+            }
+        }, { once: true });
+    })();
+</script>
+<!-- ========== 音乐组件结束 ========== -->
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>黎明章：晨光破晓</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 100%;
+        }
+        body {
+            background-image: url(images/haiyang.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        /* 中间大字：章名 + 标题 */
+        .chapter-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            text-shadow: 3px 3px 8px black;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .chapter-center h1 {
+            font-size: 9rem;!important
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+        }
+
+        .chapter-center p {
+            font-size: 8rem;!important
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        /* 底部箭头导航 */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .nav a {
+            color: white;
+            font-size: 2rem;
+            text-decoration: none;
+            margin: 0 30px;
+            opacity: 0.7;
+            text-shadow: 1px 1px 2px black;
+        }
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        /* 手机适配 */
+        @media (max-width: 768px) {
+            .chapter-center h1 {
+                font-size: 2.5rem;
+                letter-spacing: 3px;
+            }
+            .chapter-center p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chapter-center">
+        <h1>海洋章</h1>
+        <p>碧海苍穹</p >
+    </div>
+
+    <div class="nav">
+        <a href="page5.html">◀</a >
+        <a href="page7.html">▶</a >
+    </div>
+<!-- ========== 音乐组件：跨页续播 + 点击启动 ========== -->
+<div id="music-control" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer;">
+    <span id="music-icon" style="font-size: 32px; color: white; opacity: 0.7;">🎵</span>
+</div>
+
+<audio id="bgm-audio" loop preload="metadata" style="display: none;">
+    <source src="Taylor.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    (function() {
+        const audio = document.getElementById('bgm-audio');
+        const icon = document.getElementById('music-icon');
+
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime && !isNaN(parseFloat(savedTime))) {
+            audio.currentTime = parseFloat(savedTime);
+        }
+
+        const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+        icon.style.opacity = wasPlaying ? '1' : '0.5';
+
+        audio.play().catch(() => {});
+
+        const saveState = () => {
+            if (audio.duration && !isNaN(audio.currentTime)) {
+                localStorage.setItem('musicTime', audio.currentTime);
+                localStorage.setItem('musicPlaying', !audio.paused);
+            }
+        };
+
+        setInterval(saveState, 50);
+
+        icon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+                audio.play().catch(() => {});
+                icon.style.opacity = '1';
+            } else {
+                audio.pause();
+                icon.style.opacity = '0.5';
+            }
+            saveState();
+        });
+
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => icon.style.opacity = '1').catch(() => {});
+                saveState();
+            }
+        }, { once: true });
+    })();
+</script>
+<!-- ========== 音乐组件结束 ========== -->
+</body>
+</html>

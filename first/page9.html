@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>珍珠之心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 100%;
+        }
+        body {
+            background-image: url('images/jieju.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+        /* 左上角标题 —— 白色居中 */
+        .chapter-sign {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            z-index: 10;
+            text-shadow: 2px 2px 4px black;
+        }
+        /* 底部歌词框 */
+        .bottom-text {
+            position: fixed;
+            bottom: 15%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            font-style: italic;
+            text-shadow: 2px 2px 8px black;
+            background-color: rgba(0,0,0,0.5);
+            padding: 30px 20px;
+            z-index: 10;
+        }
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .nav a {
+            color: white;
+            font-size: 2rem;
+            text-decoration: none;
+            margin: 0 30px;
+            opacity: 0.7;
+            text-shadow: 1px 1px 2px black;
+        }
+        .nav a:hover {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .bottom-text { font-size: 1.2rem; bottom: 10%; padding: 15px; }
+            .chapter-sign { font-size: 1.2rem; top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chapter-sign">
+        珍珠之心 · 如愿
+    </div>
+
+    <div class="bottom-text">
+        “你失去的一切，终将指引你走向成功”<br>
+        —— Taylor Swift《You‘re on Your Own, Kid》
+    </div>
+
+    <div class="nav">
+        <a href="page8.html">◀</a >
+        <a href="page1.html">🏠</a >
+    </div>
+<!-- ========== 音乐组件：跨页续播 + 点击启动 ========== -->
+<div id="music-control" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer;">
+    <span id="music-icon" style="font-size: 32px; color: white; opacity: 0.7;">🎵</span>
+</div>
+
+<audio id="bgm-audio" loop preload="metadata" style="display: none;">
+    <source src="Taylor.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    (function() {
+        const audio = document.getElementById('bgm-audio');
+        const icon = document.getElementById('music-icon');
+
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime && !isNaN(parseFloat(savedTime))) {
+            audio.currentTime = parseFloat(savedTime);
+        }
+
+        const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+        icon.style.opacity = wasPlaying ? '1' : '0.5';
+
+        audio.play().catch(() => {});
+
+        const saveState = () => {
+            if (audio.duration && !isNaN(audio.currentTime)) {
+                localStorage.setItem('musicTime', audio.currentTime);
+                localStorage.setItem('musicPlaying', !audio.paused);
+            }
+        };
+
+        setInterval(saveState, 50);
+
+        icon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+                audio.play().catch(() => {});
+                icon.style.opacity = '1';
+            } else {
+                audio.pause();
+                icon.style.opacity = '0.5';
+            }
+            saveState();
+        });
+
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => icon.style.opacity = '1').catch(() => {});
+                saveState();
+            }
+        }, { once: true });
+    })();
+</script>
+<!-- ========== 音乐组件结束 ========== -->
+</body>
+</html>
