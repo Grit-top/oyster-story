@@ -20,6 +20,7 @@
         /* 每一屏都是一整页 */
         .chapter {
             min-height: 100vh;
+            width: 100%;
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -78,7 +79,6 @@
         .chapter-sign {
             position: fixed;
             bottom: 20px;
-            left: 0;
             width: 100%;
             text-align: center;
             font-size: 0.9rem;
@@ -106,6 +106,19 @@
             p, .quote-left, .quote-right { font-size: 1rem; }
             .quote-left, .quote-right { max-width: 80%; }
         }
+
+        /* 简单的向下引导 */
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: white;
+            opacity: 0.7;
+            text-shadow: 0 0 4px black;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -115,80 +128,123 @@
     <source src="Taylor.mp3" type="audio/mpeg">
 </audio>
 
-<!-- 按顺序放入 9 个章节（一屏一章） -->
+<!-- 1. 首页 -->
 <section class="chapter" style="background-image: url('images/shouye.png');">
-    <div class="center-box"><h1>利剑牡蛎</h1><p>“世界是我的牡蛎，我将以利剑开启”</p ></div>
+    <div class="center-box">
+        <h1>利剑牡蛎</h1>
+        <p>“世界是我的牡蛎，我将以利剑开启”</p >
+        <div class="scroll-hint">▼ 向下滚动 ▼</div>
+    </div>
 </section>
 
+<!-- 2. 火焰章：章名 -->
 <section class="chapter" style="background-image: url('images/huoyan.png');">
-    <div class="center-box"><h1>火焰章</h1><p>烈焰熔炉</p ></div>
+    <div class="center-box">
+        <h1>火焰章</h1>
+        <p>烈焰熔炉</p >
+    </div>
 </section>
 
+<!-- 3. 火焰章：两句 -->
 <section class="chapter" style="background-image: url('images/huoyan.png');">
     <div class="quote-left">“你必须准备好沐浴在你自身的烈焰之中”</div>
     <div class="quote-right">“你怎么可能重生呢，如果你不先化为灰烬？”<br>—— 尼采</div>
 </section>
 
+<!-- 4. 黎明章：章名 -->
 <section class="chapter" style="background-image: url('images/liming.png');">
-    <div class="center-box"><h1>黎明章</h1><p>晨光破晓</p ></div>
+    <div class="center-box">
+        <h1>黎明章</h1>
+        <p>晨光破晓</p >
+    </div>
 </section>
 
+<!-- 5. 黎明章：两句 -->
 <section class="chapter" style="background-image: url('images/liming.png');">
     <div class="quote-left">“黑夜无论怎样悠长，”</div>
     <div class="quote-right">“白昼总会到来。”<br>—— 莎士比亚</div>
 </section>
 
+<!-- 6. 海洋章：章名 -->
 <section class="chapter" style="background-image: url('images/haiyang.png');">
-    <div class="center-box"><h1>海洋章</h1><p>碧海苍穹</p ></div>
+    <div class="center-box">
+        <h1>海洋章</h1>
+        <p>碧海苍穹</p >
+    </div>
 </section>
 
+<!-- 7. 海洋章：两句 -->
 <section class="chapter" style="background-image: url('images/haiyang.png');">
     <div class="quote-left">“知道你自己是谁，”</div>
     <div class="quote-right">“世界就会知道你是谁。”</div>
 </section>
 
+<!-- 8. 牡蛎未开 -->
 <section class="chapter" style="background-image: url('images/muli.png');">
-    <div class="center-box"><p>⚔️ 牡蛎尚未开启，等待你的勇气 ⚔️</p ></div>
+    <div class="center-box">
+        <p>⚔️ 牡蛎尚未开启，等待你的勇气 ⚔️</p >
+    </div>
 </section>
 
+<!-- 9. 终章珍珠 -->
 <section class="chapter" style="background-image: url('images/jieju.png');">
-    <div class="center-box"><p>“你失去的一切，终将指引你走向成功”<br>—— Taylor Swift</p ></div>
+    <div class="center-box">
+        <p>“你失去的一切，终将指引你走向成功”<br>—— Taylor Swift</p >
+    </div>
 </section>
 
 <div class="chapter-sign">珍珠之心 · 如愿</div>
 
 <script>
-    const audio = document.getElementById('bgm-audio');
-    const icon = document.getElementById('music-icon');
+    (function() {
+        const audio = document.getElementById('bgm-audio');
+        const icon = document.getElementById('music-icon');
 
-    const savedTime = localStorage.getItem('musicTime');
-    if (savedTime) audio.currentTime = parseFloat(savedTime);
+        if (!audio) return;
 
-    const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
-    if (wasPlaying) audio.play().catch(() => {});
-
-    // ✅ 50ms 保存一次播放进度（极顺滑）
-    setInterval(() => {
-        if (audio.duration && !isNaN(audio.currentTime) && audio.duration !== Infinity) {
-            localStorage.setItem('musicTime', audio.currentTime);
-            localStorage.setItem('musicPlaying', !audio.paused);
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime && !isNaN(parseFloat(savedTime))) {
+            audio.currentTime = parseFloat(savedTime);
         }
-    }, 50);
 
-    icon.addEventListener('click', () => {
-        if (audio.paused) {
+        const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+        if (wasPlaying) {
             audio.play().catch(() => {});
-            icon.style.opacity = '1';
+            if (icon) icon.style.opacity = '1';
         } else {
-            audio.pause();
-            icon.style.opacity = '0.5';
+            if (icon) icon.style.opacity = '0.5';
         }
-    });
 
-    // 用户首次点击启动音乐
-    document.body.addEventListener('click', function firstClick() {
-        if (audio.paused) audio.play().catch(() => {});
-    }, { once: true });
+        setInterval(() => {
+            if (audio.duration && !isNaN(audio.currentTime) && isFinite(audio.duration)) {
+                localStorage.setItem('musicTime', audio.currentTime);
+                localStorage.setItem('musicPlaying', !audio.paused);
+            }
+        }, 50);
+
+        if (icon) {
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (audio.paused) {
+                    audio.play().catch(() => {});
+                    icon.style.opacity = '1';
+                } else {
+                    audio.pause();
+                    icon.style.opacity = '0.5';
+                }
+            });
+        }
+
+        // 用户第一次点击启动音乐
+        document.body.addEventListener('click', function firstClick() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    if (icon) icon.style.opacity = '1';
+                    localStorage.setItem('musicPlaying', 'true');
+                }).catch(() => {});
+            }
+        }, { once: true });
+    })();
 </script>
 
 </body>
