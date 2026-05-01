@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>利剑牡蛎</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        body {
+            background-image: url('images/shouye.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .home-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            text-shadow: 3px 3px 12px black;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .home-center h1 {
+            font-size: 5rem;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+
+        .home-center p {
+            font-size: 1.8rem;
+            font-style: italic;
+            line-height: 1.4;
+            letter-spacing: 1px;
+        }
+
+        /* 下方导航按钮 */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .nav a {
+            color: white;
+            font-size: 2rem;
+            text-decoration: none;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 20px;
+            border-radius: 40px;
+            opacity: 0.8;
+            transition: 0.2s;
+            display: inline-block;
+        }
+
+        .nav a:hover {
+            opacity: 1;
+            background: rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .home-center h1 {
+                font-size: 2.8rem;
+                letter-spacing: 4px;
+            }
+            .home-center p {
+                font-size: 1.2rem;
+            }
+            .nav a {
+                font-size: 1.2rem;
+                padding: 6px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 主内容 -->
+    <div class="home-center">
+        <h1>利剑牡蛎</h1>
+        <p>“世界是我的牡蛎，我将以利剑开启”</p >
+    </div>
+
+    <!-- 下一页链接：指向 page2.html -->
+    <div class="nav">
+        <a href="page2.html">▼ 开启 ▼</a >
+    </div>
+
+    <!-- ========== 音乐组件 ========== -->
+    <div id="music-control" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer;">
+        <span id="music-icon" style="font-size: 32px; color: white; opacity: 0.7;">🎵</span>
+    </div>
+    
+    <audio id="bgm-audio" loop preload="metadata" style="display: none;">
+        <source src="Taylor.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        (function() {
+            const audio = document.getElementById('bgm-audio');
+            const icon = document.getElementById('music-icon');
+    
+            const savedTime = localStorage.getItem('musicTime');
+            if (savedTime && !isNaN(parseFloat(savedTime))) {
+                audio.currentTime = parseFloat(savedTime);
+            }
+    
+            const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
+            icon.style.opacity = wasPlaying ? '1' : '0.5';
+    
+            audio.play().catch(() => {});
+    
+            const saveState = () => {
+                if (audio.duration && !isNaN(audio.currentTime)) {
+                    localStorage.setItem('musicTime', audio.currentTime);
+                    localStorage.setItem('musicPlaying', !audio.paused);
+                }
+            };
+    
+            setInterval(saveState, 50);
+    
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (audio.paused) {
+                    audio.play().catch(() => {});
+                    icon.style.opacity = '1';
+                } else {
+                    audio.pause();
+                    icon.style.opacity = '0.5';
+                }
+                saveState();
+            });
+    
+            document.body.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => icon.style.opacity = '1').catch(() => {});
+                    saveState();
+                }
+            }, { once: true });
+        })();
+    </script>
+</body>
+</html>
